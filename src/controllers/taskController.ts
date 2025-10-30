@@ -28,8 +28,52 @@ export class TaskController {
 
   // Buscar todas as tarefas
   static getAllTasks = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const { status, priority } = req.query;
+    const { 
+      status, 
+      priority, 
+      search,
+      page,
+      limit,
+      sortBy,
+      sortOrder
+    } = req.query;
 
+    // Se paginação foi solicitada, usar método paginado
+    if (page || limit) {
+      const paginationOptions = {
+        page: page ? parseInt(page as string) : 1,
+        limit: limit ? parseInt(limit as string) : 10,
+        sortBy: sortBy as any || 'createdAt',
+        sortOrder: sortOrder as any || 'DESC'
+      };
+
+      const filters: any = {};
+      
+      if (status === 'completed') {
+        filters.completed = true;
+      } else if (status === 'pending') {
+        filters.completed = false;
+      }
+      
+      if (priority && ['low', 'medium', 'high'].includes(priority as string)) {
+        filters.priority = priority as 'low' | 'medium' | 'high';
+      }
+      
+      if (search) {
+        filters.search = search as string;
+      }
+
+      const result = await TaskService.getTasksPaginated(paginationOptions, filters);
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Tasks retrieved successfully',
+        ...result
+      });
+      return;
+    }
+
+    // Método legado sem paginação
     let tasks;
 
     if (status === 'completed') {
