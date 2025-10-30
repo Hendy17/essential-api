@@ -4,17 +4,14 @@ import { JWTPayload } from '../models/Auth';
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-change-in-production';
 
 export class JWTUtils {
-  // Gerar token de acesso
   static generateAccessToken(payload: { userId: string; email: string; role: string }): string {
     return jwt.sign(payload, JWT_SECRET);
   }
 
-  // Gerar token de refresh
   static generateRefreshToken(payload: { userId: string }): string {
     return jwt.sign(payload, JWT_SECRET);
   }
 
-  // Verificar e decodificar token
   static verifyToken(token: string): JWTPayload {
     try {
       return jwt.verify(token, JWT_SECRET) as JWTPayload;
@@ -29,12 +26,10 @@ export class JWTUtils {
     }
   }
 
-  // Decodificar token sem verificar (para debug)
   static decodeToken(token: string): any {
     return jwt.decode(token);
   }
 
-  // Verificar se token está expirado
   static isTokenExpired(token: string): boolean {
     try {
       const decoded = jwt.decode(token) as any;
@@ -47,7 +42,6 @@ export class JWTUtils {
     }
   }
 
-  // Extrair token do header Authorization
   static extractTokenFromHeader(authHeader?: string): string | null {
     if (!authHeader) return null;
     
@@ -57,7 +51,6 @@ export class JWTUtils {
     return parts[1] || null;
   }
 
-  // Gerar tokens de acesso e refresh
   static generateTokenPair(payload: { userId: string; email: string; role: string }) {
     return {
       accessToken: this.generateAccessToken(payload),

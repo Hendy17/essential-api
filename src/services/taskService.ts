@@ -63,7 +63,6 @@ export class TaskService {
 
     const { completed, priority, search } = filters;
 
-    // Construir condições WHERE
     const whereConditions: string[] = [];
     const queryParams: any[] = [];
 
@@ -86,7 +85,6 @@ export class TaskService {
       ? `WHERE ${whereConditions.join(' AND ')}`
       : '';
 
-    // Mapear campos de ordenação
     const sortFields: Record<string, string> = {
       createdAt: 'created_at',
       updatedAt: 'updated_at',
@@ -97,14 +95,12 @@ export class TaskService {
 
     const orderByField = sortFields[sortBy] || 'created_at';
 
-    // Query para contar total de registros
     const countQuery = `
       SELECT COUNT(*) as total
       FROM tasks
       ${whereClause}
     `;
 
-    // Query para buscar dados paginados
     const dataQuery = `
       SELECT 
         id,
@@ -121,18 +117,14 @@ export class TaskService {
       LIMIT ? OFFSET ?
     `;
 
-    // Executar query de contagem
     const [countResult] = await pool.execute<RowDataPacket[]>(countQuery, queryParams);
     const total = (countResult[0] as any).total || 0;
 
-    // Calcular offset
     const offset = (page - 1) * limit;
     
-    // Executar query de dados
     const dataParams = [...queryParams, limit, offset];
     const [rows] = await pool.execute<RowDataPacket[]>(dataQuery, dataParams);
 
-    // Calcular metadados de paginação
     const totalPages = Math.ceil(total / limit);
     const hasNext = page < totalPages;
     const hasPrev = page > 1;

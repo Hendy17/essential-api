@@ -20,7 +20,24 @@ export const createTaskValidation: ValidationChain[] = [
   body('dueDate')
     .optional()
     .isISO8601()
-    .withMessage('Due date must be a valid ISO8601 date')
+    .withMessage('Due date must be a valid ISO8601 date'),
+  
+  body('category')
+    .optional()
+    .isLength({ max: 50 })
+    .withMessage('Category must not exceed 50 characters')
+    .trim(),
+  
+  body('tags')
+    .optional()
+    .isArray()
+    .withMessage('Tags must be an array'),
+  
+  body('tags.*')
+    .optional()
+    .isLength({ max: 20 })
+    .withMessage('Each tag must not exceed 20 characters')
+    .trim()
 ];
 
 export const updateTaskValidation: ValidationChain[] = [
@@ -47,7 +64,24 @@ export const updateTaskValidation: ValidationChain[] = [
   body('dueDate')
     .optional()
     .isISO8601()
-    .withMessage('Due date must be a valid ISO8601 date')
+    .withMessage('Due date must be a valid ISO8601 date'),
+  
+  body('category')
+    .optional()
+    .isLength({ max: 50 })
+    .withMessage('Category must not exceed 50 characters')
+    .trim(),
+  
+  body('tags')
+    .optional()
+    .isArray()
+    .withMessage('Tags must be an array'),
+  
+  body('tags.*')
+    .optional()
+    .isLength({ max: 20 })
+    .withMessage('Each tag must not exceed 20 characters')
+    .trim()
 ];
 
 // Validações de autenticação

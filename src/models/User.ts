@@ -33,7 +33,7 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters'],
-    select: false // Por padrão, não incluir senha nas consultas
+    select: false 
   },
   role: {
     type: String,
@@ -57,11 +57,8 @@ const userSchema = new Schema<IUser>({
   toObject: { virtuals: true }
 });
 
-// Índice para performance
-userSchema.index({ email: 1 });
 userSchema.index({ createdAt: -1 });
 
-// Middleware para hash da senha antes de salvar
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
@@ -74,7 +71,6 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Método para comparar senhas
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.password);
 };

@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler';
 import taskRoutes from './routes/taskRoutes';
+import taskMongoRoutes from './routes/taskMongoRoutes';
 import authRoutes from './routes/authRoutes';
 import { testConnection, createTables } from './config/database';
 import { connectMongoDB } from './config/mongodb';
@@ -45,8 +46,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Rotas da API
+// Routes
+app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v2/tasks', taskMongoRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({
@@ -58,10 +61,11 @@ app.get('/api/health', (req, res) => {
 
 app.use(errorHandler);
 
-app.use('*', (req, res) => {
+// 404 handler deve ser o último middleware
+app.use((req, res) => {
   res.status(404).json({
     status: 'error',
-    message: 'Route not found'
+    message: `Route ${req.method} ${req.path} not found`
   });
 });
 
