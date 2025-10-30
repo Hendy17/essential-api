@@ -23,9 +23,7 @@ export interface UpdateTaskMongoInput {
 }
 
 export class TaskMongoService {
-  // Criar uma nova tarefa
   static async createTask(userId: string, taskData: CreateTaskMongoInput): Promise<ITask> {
-    // Verificar se o usuário existe
     const user = await User.findById(userId);
     if (!user) {
       throw new Error('User not found');
@@ -43,7 +41,6 @@ export class TaskMongoService {
     return task;
   }
 
-  // Buscar todas as tarefas do usuário
   static async getAllTasks(userId: string): Promise<ITask[]> {
     const tasks = await Task.find({ userId })
       .populate('userId', 'name email')
@@ -52,7 +49,6 @@ export class TaskMongoService {
     return tasks;
   }
 
-  // Buscar tarefas com paginação e filtros
   static async getTasksPaginated(
     userId: string,
     options: PaginationOptions = {},
@@ -67,7 +63,6 @@ export class TaskMongoService {
 
     const { completed, priority, search } = filters;
 
-    // Construir query
     const query: any = { userId };
 
     if (completed !== undefined) {
@@ -82,7 +77,6 @@ export class TaskMongoService {
       query.$text = { $search: search };
     }
 
-    // Mapear campos de ordenação
     const sortFields: Record<string, string> = {
       createdAt: 'createdAt',
       updatedAt: 'updatedAt',
@@ -94,20 +88,16 @@ export class TaskMongoService {
     const sortField = sortFields[sortBy] || 'createdAt';
     const sortDirection = sortOrder === 'ASC' ? 1 : -1;
 
-    // Contar total de documentos
     const total = await Task.countDocuments(query);
 
-    // Calcular offset
     const offset = (page - 1) * limit;
 
-    // Buscar dados paginados
     const tasks = await Task.find(query)
       .populate('userId', 'name email')
       .sort({ [sortField]: sortDirection })
       .limit(limit)
       .skip(offset);
 
-    // Calcular metadados de paginação
     const totalPages = Math.ceil(total / limit);
     const hasNext = page < totalPages;
     const hasPrev = page > 1;
@@ -125,7 +115,6 @@ export class TaskMongoService {
     };
   }
 
-  // Buscar tarefa por ID
   static async getTaskById(userId: string, taskId: string): Promise<ITask | null> {
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
       return null;
@@ -139,7 +128,6 @@ export class TaskMongoService {
     return task;
   }
 
-  // Atualizar uma tarefa
   static async updateTask(
     userId: string, 
     taskId: string, 
@@ -149,7 +137,6 @@ export class TaskMongoService {
       return null;
     }
 
-    // Converter dueDate para Date se fornecido
     const updatePayload: any = { ...updateData };
     if (updateData.dueDate) {
       updatePayload.dueDate = new Date(updateData.dueDate);
@@ -167,7 +154,6 @@ export class TaskMongoService {
     return task;
   }
 
-  // Deletar uma tarefa
   static async deleteTask(userId: string, taskId: string): Promise<boolean> {
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
       return false;
@@ -181,7 +167,6 @@ export class TaskMongoService {
     return result.deletedCount > 0;
   }
 
-  // Buscar tarefas por status
   static async getTasksByStatus(userId: string, completed: boolean): Promise<ITask[]> {
     const tasks = await Task.find({ 
       userId, 
@@ -193,7 +178,6 @@ export class TaskMongoService {
     return tasks;
   }
 
-  // Buscar tarefas por prioridade
   static async getTasksByPriority(
     userId: string, 
     priority: 'low' | 'medium' | 'high'
@@ -208,7 +192,6 @@ export class TaskMongoService {
     return tasks;
   }
 
-  // Buscar tarefas por categoria
   static async getTasksByCategory(userId: string, category: string): Promise<ITask[]> {
     const tasks = await Task.find({ 
       userId, 
@@ -220,7 +203,6 @@ export class TaskMongoService {
     return tasks;
   }
 
-  // Buscar tarefas atrasadas
   static async getOverdueTasks(userId: string): Promise<ITask[]> {
     const now = new Date();
     
@@ -235,7 +217,6 @@ export class TaskMongoService {
     return tasks;
   }
 
-  // Obter estatísticas das tarefas do usuário
   static async getTaskStats(userId: string) {
     const stats = await Task.aggregate([
       { $match: { userId: new mongoose.Types.ObjectId(userId) } },

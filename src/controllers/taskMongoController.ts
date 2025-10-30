@@ -5,7 +5,6 @@ import { asyncHandler } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 
 export class TaskMongoController {
-  // Criar uma nova tarefa
   static createTask = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -41,7 +40,6 @@ export class TaskMongoController {
     }
   });
 
-  // Buscar todas as tarefas do usuário
   static getAllTasks = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -62,7 +60,6 @@ export class TaskMongoController {
       category
     } = req.query;
 
-    // Se paginação foi solicitada, usar método paginado
     if (page || limit) {
       const paginationOptions = {
         page: page ? parseInt(page as string) : 1,
@@ -101,7 +98,6 @@ export class TaskMongoController {
       return;
     }
 
-    // Método sem paginação
     let tasks;
 
     if (status === 'completed') {
@@ -124,7 +120,6 @@ export class TaskMongoController {
     });
   });
 
-  // Buscar tarefa por ID
   static getTaskById = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -161,7 +156,6 @@ export class TaskMongoController {
     });
   });
 
-  // Atualizar uma tarefa
   static updateTask = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -208,7 +202,6 @@ export class TaskMongoController {
     });
   });
 
-  // Deletar uma tarefa
   static deleteTask = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -244,7 +237,6 @@ export class TaskMongoController {
     });
   });
 
-  // Marcar tarefa como completa
   static completeTask = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -281,7 +273,6 @@ export class TaskMongoController {
     });
   });
 
-  // Marcar tarefa como pendente
   static uncompleteTask = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -318,7 +309,6 @@ export class TaskMongoController {
     });
   });
 
-  // Obter tarefas atrasadas
   static getOverdueTasks = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -338,7 +328,6 @@ export class TaskMongoController {
     });
   });
 
-  // Obter estatísticas das tarefas
   static getTaskStats = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
