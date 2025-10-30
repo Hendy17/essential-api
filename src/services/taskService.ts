@@ -1,9 +1,9 @@
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 import pool from '../config/database';
 import { Task, CreateTaskInput, UpdateTaskInput } from '../models/Task';
+import { PaginationOptions, PaginatedResponse, TaskFilters } from '../models/Pagination';
 
 export class TaskService {
-  // Criar uma nova tarefa
   static async createTask(taskData: CreateTaskInput): Promise<Task> {
     const {
       title,
@@ -22,7 +22,6 @@ export class TaskService {
       [title, description, priority, dueDate]
     );
 
-    // Buscar a tarefa criada
     const createdTask = await this.getTaskById(result.insertId);
     if (!createdTask) {
       throw new Error('Failed to create task');
@@ -31,7 +30,6 @@ export class TaskService {
     return createdTask;
   }
 
-  // Buscar todas as tarefas
   static async getAllTasks(): Promise<Task[]> {
     const query = `
       SELECT 
@@ -51,7 +49,98 @@ export class TaskService {
     return rows as Task[];
   }
 
-  // Buscar tarefa por ID
+  static async getTasksPaginated(
+    options: PaginationOptions = {},
+    filters: TaskFilters = {}
+  ): Promise<PaginatedResponse<Task>> {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC'
+    } = options;
+
+    const { completed, priority, search } = filters;
+
+    const whereConditions: string[] = [];
+    const queryParams: any[] = [];
+
+    if (completed !== undefined) {
+      whereConditions.push('completed = ?');
+      queryParams.push(completed);
+    }
+
+    if (priority) {
+      whereConditions.push('priority = ?');
+      queryParams.push(priority);
+    }
+
+    if (search) {
+      whereConditions.push('(title LIKE ? OR description LIKE ?)');
+      queryParams.push(`%${search}%`, `%${search}%`);
+    }
+
+    const whereClause = whereConditions.length > 0 
+      ? `WHERE ${whereConditions.join(' AND ')}`
+      : '';
+
+    const sortFields: Record<string, string> = {
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      title: 'title',
+      priority: 'priority',
+      dueDate: 'due_date'
+    };
+
+    const orderByField = sortFields[sortBy] || 'created_at';
+
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM tasks
+      ${whereClause}
+    `;
+
+    const dataQuery = `
+      SELECT 
+        id,
+        title,
+        description,
+        completed,
+        priority,
+        due_date as dueDate,
+        created_at as createdAt,
+        updated_at as updatedAt
+      FROM tasks
+      ${whereClause}
+      ORDER BY ${orderByField} ${sortOrder}
+      LIMIT ? OFFSET ?
+    `;
+
+    const [countResult] = await pool.execute<RowDataPacket[]>(countQuery, queryParams);
+    const total = (countResult[0] as any).total || 0;
+
+    const offset = (page - 1) * limit;
+    
+    const dataParams = [...queryParams, limit, offset];
+    const [rows] = await pool.execute<RowDataPacket[]>(dataQuery, dataParams);
+
+    const totalPages = Math.ceil(total / limit);
+    const hasNext = page < totalPages;
+    const hasPrev = page > 1;
+
+    return {
+      data: rows as Task[],
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext,
+        hasPrev
+      }
+    };
+  }
+
   static async getTaskById(id: number): Promise<Task | null> {
     const query = `
       SELECT 
@@ -76,7 +165,6 @@ export class TaskService {
     return rows[0] as Task;
   }
 
-  // Atualizar uma tarefa
   static async updateTask(id: number, updateData: UpdateTaskInput): Promise<Task | null> {
     const task = await this.getTaskById(id);
     if (!task) {
@@ -112,7 +200,7 @@ export class TaskService {
     }
 
     if (updateFields.length === 0) {
-      return task; // Nenhuma atualização necessária
+      return task; 
     }
 
     updateValues.push(id);
@@ -128,7 +216,6 @@ export class TaskService {
     return await this.getTaskById(id);
   }
 
-  // Deletar uma tarefa
   static async deleteTask(id: number): Promise<boolean> {
     const query = 'DELETE FROM tasks WHERE id = ?';
     const [result] = await pool.execute<ResultSetHeader>(query, [id]);
@@ -136,7 +223,6 @@ export class TaskService {
     return result.affectedRows > 0;
   }
 
-  // Buscar tarefas por status
   static async getTasksByStatus(completed: boolean): Promise<Task[]> {
     const query = `
       SELECT 
@@ -157,7 +243,6 @@ export class TaskService {
     return rows as Task[];
   }
 
-  // Buscar tarefas por prioridade
   static async getTasksByPriority(priority: 'low' | 'medium' | 'high'): Promise<Task[]> {
     const query = `
       SELECT 
