@@ -14,10 +14,8 @@ const dbConfig = {
   queueLimit: 0
 };
 
-// Pool de conexões
 export const pool = mysql.createPool(dbConfig);
 
-// Função para testar a conexão
 export const testConnection = async (): Promise<void> => {
   try {
     const connection = await pool.getConnection();
@@ -29,7 +27,6 @@ export const testConnection = async (): Promise<void> => {
   }
 };
 
-// Função para criar as tabelas se não existirem
 export const createTables = async (): Promise<void> => {
   try {
     const createTasksTable = `
@@ -46,9 +43,9 @@ export const createTables = async (): Promise<void> => {
     `;
 
     await pool.execute(createTasksTable);
-    console.log('✅ Tables created successfully');
+    console.log('Tables created successfully');
   } catch (error) {
-    console.error('❌ Error creating tables:', error);
+    console.error('Error creating tables:', error);
     throw error;
   }
 };

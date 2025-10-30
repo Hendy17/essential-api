@@ -4,9 +4,7 @@ import { TaskService } from '../services/taskService';
 import { asyncHandler } from '../middleware/errorHandler';
 
 export class TaskController {
-  // Criar uma nova tarefa
   static createTask = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    // Verificar erros de validação
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(400).json({
@@ -26,7 +24,6 @@ export class TaskController {
     });
   });
 
-  // Buscar todas as tarefas
   static getAllTasks = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { 
       status, 
@@ -38,7 +35,6 @@ export class TaskController {
       sortOrder
     } = req.query;
 
-    // Se paginação foi solicitada, usar método paginado
     if (page || limit) {
       const paginationOptions = {
         page: page ? parseInt(page as string) : 1,
@@ -73,7 +69,6 @@ export class TaskController {
       return;
     }
 
-    // Método legado sem paginação
     let tasks;
 
     if (status === 'completed') {
@@ -94,7 +89,6 @@ export class TaskController {
     });
   });
 
-  // Buscar tarefa por ID
   static getTaskById = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     
@@ -133,7 +127,6 @@ export class TaskController {
     });
   });
 
-  // Atualizar uma tarefa
   static updateTask = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     
@@ -155,7 +148,6 @@ export class TaskController {
       return;
     }
 
-    // Verificar erros de validação
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(400).json({
@@ -183,7 +175,6 @@ export class TaskController {
     });
   });
 
-  // Deletar uma tarefa
   static deleteTask = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     
@@ -221,7 +212,6 @@ export class TaskController {
     });
   });
 
-  // Marcar tarefa como completa
   static completeTask = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     
@@ -260,7 +250,6 @@ export class TaskController {
     });
   });
 
-  // Marcar tarefa como pendente
   static uncompleteTask = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     
