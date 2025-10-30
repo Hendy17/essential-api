@@ -1,0 +1,247 @@
+<div class="task-management-container">
+  <!-- Header/Toolbar -->
+  <mat-toolbar color="primary" class="app-toolbar">
+    <span class="toolbar-title">
+      Gerenciador de Tarefas
+    </span>
+    
+    <span class="toolbar-spacer"></span>
+    
+    @if (currentUser(); as user) {
+      <span class="user-info">
+        {{ user.name }}
+      </span>
+      
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        ⋮
+      </button>
+      
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="logout()">
+          <span>Sair</span>
+        </button>
+      </mat-menu>
+    }
+  </mat-toolbar>
+
+  <div class="main-content">
+    <div class="stats-section">
+      <div class="stats-cards">
+        <mat-card class="stat-card total">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-info">
+                <div class="stat-number">{{ totalTasks() }}</div>
+                <div class="stat-label">Total</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card pending">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-info">
+                <div class="stat-number">{{ pendingTasks() }}</div>
+                <div class="stat-label">Pendentes</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card completed">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-info">
+                <div class="stat-number">{{ completedTasks() }}</div>
+                <div class="stat-label">Concluídas</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <div class="content-wrapper">
+      <mat-card class="filters-card">
+        <mat-card-header>
+          <mat-card-title>
+            Filtros
+          </mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <form [formGroup]="filterForm" class="filters-form">
+            <div class="filter-row">
+              <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Buscar tarefas</mat-label>
+                <input matInput formControlName="search" placeholder="Digite para buscar...">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select formControlName="status">
+                  @for (option of statusOptions; track option.value) {
+                    <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Prioridade</mat-label>
+                <mat-select formControlName="priority">
+                  @for (option of priorityOptions; track option.value) {
+                    <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="filter-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Categoria</mat-label>
+                <input matInput formControlName="category" placeholder="Ex: trabalho, pessoal">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Ordenar por</mat-label>
+                <mat-select formControlName="sortBy">
+                  @for (option of sortOptions; track option.value) {
+                    <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Ordem</mat-label>
+                <mat-select formControlName="sortOrder">
+                  <mat-option value="ASC">Crescente</mat-option>
+                  <mat-option value="DESC">Decrescente</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button mat-raised-button color="warn" (click)="clearFilters()" class="clear-filters-btn">
+                Limpar
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="tasks-card">
+        <mat-card-header>
+          <mat-card-title>
+            Tarefas
+            @if (totalTasks() > 0) {
+              <mat-chip-set>
+                <mat-chip>{{ totalTasks() }} tarefa(s)</mat-chip>
+              </mat-chip-set>
+            }
+          </mat-card-title>
+          
+          <div class="header-actions">
+            <button mat-raised-button color="primary" (click)="createTask()">
+              Nova Tarefa
+            </button>
+            <button mat-button color="accent" (click)="forceLoadTasks()" style="margin-left: 10px;">
+              🔄 Recarregar
+            </button>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+          @if (loading()) {
+            <div class="loading-container">
+              <mat-spinner diameter="50"></mat-spinner>
+              <p>Carregando tarefas...</p>
+            </div>
+          } @else if (tasks().length === 0) {
+            <div class="empty-state">
+              <h3>Nenhuma tarefa encontrada</h3>
+              <p>Não há tarefas que correspondam aos filtros aplicados.</p>
+              <button mat-raised-button color="primary" (click)="clearFilters()">
+                Limpar Filtros
+              </button>
+            </div>
+          } @else {
+            <div class="tasks-list">
+              @for (task of tasks(); track task.id || task._id) {
+                <mat-card class="task-item" [class.completed]="task.completed">
+                  <mat-card-content>
+                    <div class="task-content">
+                      <div class="task-checkbox">
+                        <mat-checkbox 
+                          [checked]="task.completed"
+                          (change)="toggleTaskStatus(task)"
+                          [color]="'primary'">
+                        </mat-checkbox>
+                      </div>
+
+                      <div class="task-info">
+                        <div class="task-header">
+                          <h3 class="task-title" [class.completed]="task.completed">
+                            {{ task.title }}
+                          </h3>
+                          
+                          <div class="task-priority">
+                            <mat-chip [color]="getPriorityColor(task.priority)">
+                              {{ task.priority }}
+                            </mat-chip>
+                          </div>
+                        </div>
+
+                        @if (task.description) {
+                          <p class="task-description">{{ task.description }}</p>
+                        }
+
+                        <div class="task-meta">
+                          @if (task.category) {
+                            <mat-chip class="category-chip">
+                              {{ task.category }}
+                            </mat-chip>
+                          }
+
+                          @if (task.tags && task.tags.length > 0) {
+                            <div class="task-tags">
+                              @for (tag of task.tags; track tag) {
+                                <mat-chip class="tag-chip">
+                                  {{ tag }}
+                                </mat-chip>
+                              }
+                            </div>
+                          }
+
+                          @if (task.dueDate) {
+                            <span class="due-date">
+                              Vence em: {{ formatDate(task.dueDate) }}
+                            </span>
+                          }
+
+                          <span class="created-date">
+                            Criada: {{ formatDate(task.createdAt!) }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="task-actions">
+                        <button mat-icon-button color="primary" (click)="editTask(task)" 
+                                title="Editar tarefa">
+                          ✏️
+                        </button>
+                        
+                        <button mat-icon-button color="warn" (click)="deleteTask(task)"
+                                title="Excluir tarefa">
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
