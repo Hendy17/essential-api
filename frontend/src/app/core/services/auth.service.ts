@@ -28,10 +28,15 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
+    console.log('🔐 AuthService.login called with:', credentials);
+    console.log('🌐 API URL:', `${this.API_URL}/auth/login`);
+    
     return this.http.post<AuthResponse>(`${this.API_URL}/auth/login`, credentials)
       .pipe(
         tap(response => {
+          console.log('📡 Login response:', response);
           if (response.status === 'success' && response.data) {
+            console.log('💾 Setting auth data');
             this.setAuthData(response.data);
           }
         }),
@@ -175,12 +180,26 @@ export class AuthService {
   }
 
   private handleError = (error: any): Observable<never> => {
-    console.error('Auth Service Error:', error);
+    console.error('🚨 Auth Service Error:', error);
+    console.error('📊 Error status:', error.status);
+    console.error('📝 Error message:', error.message);
+    console.error('📦 Error details:', error.error);
     
     if (error.status === 401) {
       this.clearAuthData();
     }
     
-    return throwError(() => error);
+    let errorMessage = 'Ocorreu um erro inesperado';
+    
+    if (error.error?.message) {
+      errorMessage = error.error.message;
+    } else if (error.error?.errors && Array.isArray(error.error.errors)) {
+      errorMessage = error.error.errors.map((err: any) => err.msg || err.message).join(', ');
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    console.log('📢 Final error message:', errorMessage);
+    return throwError(() => ({ ...error, userMessage: errorMessage }));
   };
 }

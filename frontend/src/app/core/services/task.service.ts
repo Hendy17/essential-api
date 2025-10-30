@@ -27,6 +27,7 @@ export class TaskService {
 
  
   getTasks(filters?: TaskFilters): Observable<TasksResponse> {
+    console.log('🌐 TaskService.getTasks called with filters:', filters);
     this.setLoading(true);
     
     let params = new HttpParams();
@@ -39,15 +40,21 @@ export class TaskService {
       });
     }
 
+    console.log('📡 Making request to:', `${this.API_URL}/v2/tasks`);
+    console.log('🔐 With params:', params.toString());
+
     return this.http.get<TasksResponse>(`${this.API_URL}/v2/tasks`, { params })
       .pipe(
         tap(response => {
+          console.log('📥 Raw API response:', response);
           if (response.status === 'success') {
+            console.log('💾 Updating tasks subject with:', response.data);
             this.tasksSubject.next(response.data);
           }
           this.setLoading(false);
         }),
         catchError(error => {
+          console.error('❌ Error in getTasks:', error);
           this.setLoading(false);
           return this.handleError(error);
         })

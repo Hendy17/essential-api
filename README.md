@@ -1,25 +1,66 @@
-# 🚀 Task Management API
+# � Task Management API - Full Stack Application
 
-> **API RESTful completa para gerenciamento de tarefas com autenticação JWT e duplo suporte de banco de dados**
+> **Aplicação completa de gerenciamento de tarefas com backend Node.js/TypeScript e frontend Angular 18+**
 
 [![Node.js](https://img.shields.io/badge/Node.js-18.x-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
+[![Angular](https://img.shields.io/badge/Angular-18+-red.svg)](https://angular.dev/)
 [![Express](https://img.shields.io/badge/Express-4.x-lightgrey.svg)](https://expressjs.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.x-orange.svg)](https://www.mysql.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7.x-green.svg)](https://www.mongodb.com/)
 
 ## 📋 Índice
 
-- [Funcionalidades](#-funcionalidades)
-- [Tecnologias](#-tecnologias)
-- [Arquitetura](#-arquitetura)
-- [Instalação](#-instalação)
-- [Configuração](#-configuração)
-- [APIs Disponíveis](#-apis-disponíveis)
-- [Autenticação](#-autenticação)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Scripts](#-scripts)
-- [Desenvolvimento](#-desenvolvimento)
+- [🚀 Start Rápido](#-start-rápido)
+- [🛠️ Tecnologias](#-tecnologias)
+- [📁 Estrutura do Projeto](#-estrutura-do-projeto)
+- [⚙️ Instalação Completa](#-instalação-completa)
+- [🌐 APIs Disponíveis](#-apis-disponíveis)
+- [🔐 Autenticação](#-autenticação)
+- [🎨 Features Implementadas](#-features-implementadas)
+- [📱 Interface do Usuário](#-interface-do-usuário)
+- [🛠️ Troubleshooting](#-troubleshooting)
+
+## 🚀 Start Rápido
+
+```bash
+# Clone o repositório
+git clone https://github.com/Hendy17/essential-api.git
+cd essential-api
+
+# Configure o backend
+cd backend
+npm install
+# Configure o arquivo .env (veja seção de configuração)
+npm run dev
+
+# Em outro terminal, configure o frontend
+cd frontend
+npm install
+npm start
+
+# Acesse http://localhost:4200
+# Credenciais: hendy@test.com / Teste123
+```
+
+## 🛠️ Tecnologias
+
+### **Backend**
+- **Node.js** 18+ com **TypeScript** 5.x
+- **Express.js** - Framework web RESTful
+- **MySQL** - Banco de dados principal
+- **MongoDB** - Banco de dados alternativo
+- **JWT** - Autenticação e autorização
+- **bcryptjs** - Criptografia de senhas
+- **express-validator** - Validação de dados
+
+### **Frontend**
+- **Angular 18+** - Framework frontend moderno
+- **Angular Material** - Componentes UI elegantes
+- **TypeScript** - Type safety e produtividade
+- **RxJS** - Programação reativa
+- **Signals** - Gerenciamento de estado
+- **Glass Morphism** - Design visual moderno
 
 ## ✨ Funcionalidades
 
@@ -64,86 +105,189 @@
 - **morgan** para logging HTTP
 - **dotenv** para variáveis de ambiente
 
-## 🏛️ Arquitetura
+## 📁 Estrutura do Projeto
 
 ```
-📁 Task Management API
-├── 🔄 Controllers      → Lógica de controle das rotas
-├── 🛡️ Middleware       → Autenticação, validação, erros
-├── 📊 Models          → Esquemas de dados (MySQL + MongoDB)
-├── 🚏 Routes          → Definição de endpoints
-├── ⚙️ Services        → Lógica de negócio
-├── 🔧 Utils           → Utilitários (JWT, validação)
-└── ⚡ Config          → Configurações de banco
+essential/
+├── backend/                    # API RESTful Node.js/TypeScript
+│   ├── src/
+│   │   ├── config/            # Configurações (DB, MongoDB)
+│   │   ├── controllers/       # Controladores das rotas
+│   │   ├── middleware/        # Middlewares (auth, errors)
+│   │   ├── models/           # Modelos de dados
+│   │   ├── routes/           # Definição das rotas
+│   │   ├── services/         # Lógica de negócio
+│   │   ├── utils/            # Utilitários (JWT, validação)
+│   │   └── index.ts          # Entrada da aplicação
+│   ├── .env                  # Variáveis de ambiente
+│   └── package.json
+├── frontend/                  # Aplicação Angular 18+
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/         # Serviços, guards, interceptors
+│   │   │   ├── features/     # Módulos de funcionalidades
+│   │   │   │   ├── auth/     # Login, registro
+│   │   │   │   └── tasks/    # CRUD de tarefas
+│   │   │   └── shared/       # Componentes compartilhados
+│   │   └── environments/     # Configurações de ambiente
+│   └── package.json
+├── package.json              # Scripts de execução conjunta
+└── README.md
 ```
 
-## 🚀 Instalação
+## ⚙️ Instalação Completa
 
 ### **Pré-requisitos**
-- Node.js 18+ instalado
-- MySQL 8+ rodando
-- MongoDB 7+ rodando
+- Node.js 18+ 
 - npm ou yarn
+- MySQL 8.0+
+- MongoDB 7+ (opcional)
 
-### **Passos**
-
-1. **Clone o repositório**
+### **1. Clone e Configure**
 ```bash
 git clone https://github.com/Hendy17/essential-api.git
 cd essential-api
 ```
 
-2. **Instale as dependências**
+### **2. Backend Setup**
 ```bash
+cd backend
 npm install
-```
 
-3. **Configure os bancos de dados**
-```bash
-# MySQL
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS task_management;"
-
-# MongoDB (via Homebrew no macOS)
-brew services start mongodb/brew/mongodb-community
-```
-
-4. **Configure as variáveis de ambiente**
-```bash
+# Configure .env
 cp .env.example .env
-# Edite o arquivo .env com suas configurações
-```
+# Edite o .env com suas configurações
 
-5. **Execute em desenvolvimento**
-```bash
+# Inicie o backend
 npm run dev
 ```
 
-## ⚙️ Configuração
-
-### **Arquivo `.env`**
+**Arquivo `.env` do Backend:**
 ```env
-# Server Configuration
+# Servidor
 PORT=3000
 NODE_ENV=development
+FRONTEND_URL=http://localhost:4200
 
-# MySQL Database
+# MySQL
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
-DB_PASSWORD=
+DB_PASSWORD=sua_senha
 DB_NAME=task_management
 
-# MongoDB Configuration
-MONGODB_URI=mongodb://localhost:27017/task_management_mongo
+# MongoDB (opcional)
+MONGODB_URI=mongodb://localhost:27017/task_management
 
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRES_IN=7d
-JWT_REFRESH_SECRET=your-super-secret-refresh-key
-JWT_REFRESH_EXPIRES_IN=30d
+# JWT
+JWT_SECRET=sua_chave_secreta_jwt
+JWT_REFRESH_SECRET=sua_chave_refresh_jwt
+JWT_EXPIRES_IN=1h
+JWT_REFRESH_EXPIRES_IN=7d
+```
 
-# Security
-BCRYPT_SALT_ROUNDS=12
+### **3. Frontend Setup**
+```bash
+cd frontend
+npm install
+
+# Inicie o frontend
+npm start
+```
+
+### **4. Execução Simultânea**
+Na pasta raiz:
+```bash
+npm install
+npm run dev  # Inicia backend + frontend simultaneamente
+```
+
+## 🎨 Features Implementadas
+
+### ✅ **Backend (API)**
+- [x] **API RESTful completa** com Express + TypeScript
+- [x] **Autenticação JWT** com refresh tokens
+- [x] **CRUD de tarefas** completo
+- [x] **Dual database** (MySQL + MongoDB)
+- [x] **Validação robusta** de dados
+- [x] **Middleware de segurança** e tratamento de erros
+- [x] **CORS configurado** para o frontend
+- [x] **Paginação e filtros** avançados
+
+### ✅ **Frontend (Angular)**
+- [x] **Interface moderna** com Angular Material
+- [x] **Autenticação completa** (login/registro)
+- [x] **CRUD de tarefas** com modal de criação
+- [x] **Design responsivo** e acessível
+- [x] **Glass morphism UI** com gradientes
+- [x] **Gerenciamento de estado** com Signals
+- [x] **Interceptors HTTP** automáticos
+- [x] **Guards de rota** para proteção
+- [x] **Standalone components** modernos
+
+### 🎯 **Funcionalidades do Sistema**
+- ✅ **Registro e Login** de usuários
+- ✅ **Dashboard** com estatísticas
+- ✅ **Criação de tarefas** com validação
+- ✅ **Listagem organizada** de tarefas
+- ✅ **Filtros dinâmicos** (prioridade, status)
+- ✅ **Interface intuitiva** e responsiva
+- ✅ **Autenticação persistente** com tokens
+
+## 📱 Interface do Usuário
+
+### **🔐 Tela de Login**
+- Design moderno com glass morphism
+- Validação em tempo real
+- Gradientes e efeitos visuais
+- Responsivo para mobile
+
+### **📊 Dashboard de Tarefas**
+- Cards com estatísticas (total, pendentes)
+- Lista organizada de tarefas
+- Botão para nova tarefa
+- Filtros e ordenação
+
+### **➕ Modal de Criação**
+- Formulário completo de tarefa
+- Campos: título, descrição, prioridade, data
+- Validação antes do envio
+- Feedback visual de sucesso/erro
+
+### **🎨 Design System**
+- **Paleta**: Azuis e gradientes
+- **Tipografia**: Material Design
+- **Espaçamento**: Grid consistente
+- **Animações**: Transições suaves
+
+## 👥 Credenciais de Teste
+
+```
+Email: hendy@test.com
+Senha: Teste123
+```
+
+## 🔧 Scripts Disponíveis
+
+### **Raiz do Projeto**
+```bash
+npm run dev              # Backend + Frontend simultâneo
+npm run dev:backend      # Apenas backend
+npm run dev:frontend     # Apenas frontend
+```
+
+### **Backend**
+```bash
+npm run dev              # Desenvolvimento com hot reload
+npm run build            # Build para produção
+npm start                # Executa versão compilada
+```
+
+### **Frontend**
+```bash
+npm start                # Servidor de desenvolvimento
+npm run build            # Build para produção
+npm test                 # Executa testes unitários
 ```
 
 ## 🌐 APIs Disponíveis
@@ -382,35 +526,120 @@ curl -X GET "http://localhost:3000/api/v2/tasks?page=1&limit=5&category=trabalho
 - ✅ Middleware de segurança
 - ✅ Associação de tarefas com usuários
 
-## 🚨 Notas Importantes
+## �️ Troubleshooting
 
-### **Segurança**
-- 🔐 Todas as senhas são hash com bcrypt (salt rounds: 12)
-- 🛡️ Tokens JWT com expiração configurável
-- 🔒 Middleware de autenticação em rotas protegidas
-- 🛠️ Headers de segurança com helmet
+### **Problema: Frontend não conecta com backend**
+**Sintomas:**
+- Erro CORS no console
+- Requisições falhando
+- Tarefas não carregam
 
-### **Performance**
-- ⚡ Connection pooling para MySQL
-- 📊 Paginação automática para grandes datasets
-- 🔍 Índices otimizados no MongoDB
-- 💾 Queries otimizadas com projeções
+**Solução:**
+```bash
+# Verifique se o backend está rodando
+curl http://localhost:3000/api/health
 
-### **Monitoramento**
-- 📝 Logging HTTP com morgan
-- 🔧 Health check endpoint
-- ❌ Tratamento centralizado de erros
-- 📊 Estatísticas de tarefas por usuário
+# Verifique se CORS está configurado
+# No arquivo backend/.env:
+FRONTEND_URL=http://localhost:4200
+```
 
-## 📞 Suporte
+### **Problema: Tarefas não aparecem na tela**
+**Sintomas:**
+- Tela mostra "Nenhuma tarefa encontrada"
+- Console sem erros
+- Login funcionando
 
-- **Repositório**: [https://github.com/Hendy17/essential-api](https://github.com/Hendy17/essential-api)
-- **Issues**: [GitHub Issues](https://github.com/Hendy17/essential-api/issues)
+**Solução:**
+1. Abra o **DevTools (F12)**
+2. Verifique a aba **Console** para logs
+3. Clique no botão **"� Recarregar"**
+4. Verifique se o token está válido
 
-## 📄 Licença
+### **Problema: Erro de autenticação**
+**Sintomas:**
+- "Token inválido" ou 401 Unauthorized
+- Redirecionamento para login
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+**Solução:**
+```bash
+# Limpe o localStorage do navegador
+localStorage.clear()
+
+# Ou faça logout e login novamente
+# Verifique se JWT_SECRET está configurado no .env
+```
+
+### **Problema: Erro ao criar tarefa**
+**Sintomas:**
+- Modal abre mas não salva
+- Erro no console
+
+**Solução:**
+1. Verifique se todos os campos obrigatórios estão preenchidos
+2. Confirme se o backend está rodando
+3. Verifique logs no console do navegador
+
+### **Problema: Banco de dados não conecta**
+**Sintomas:**
+- Erro "Database connection failed"
+- Backend não inicia
+
+**Solução:**
+```bash
+# MySQL
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS task_management;"
+
+# Verifique credenciais no .env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=sua_senha
+DB_NAME=task_management
+```
+
+## 🤝 Contribuição
+
+1. **Fork** o projeto
+2. Crie uma **branch** para sua feature (`git checkout -b feature/MinhaFeature`)
+3. **Commit** suas mudanças (`git commit -m 'Add: MinhaFeature'`)
+4. **Push** para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um **Pull Request**
+
+## � Licença
+
+Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👨‍� Autor
+
+**Hendy Vorpagel**
+- GitHub: [@Hendy17](https://github.com/Hendy17)
+- Email: hendyvorpagel@gmail.com
+- LinkedIn: [Hendy Vorpagel](https://linkedin.com/in/hendy-vorpagel)
 
 ---
 
-**Desenvolvido usando Node.js, TypeScript, MySQL e MongoDB**
+## 🎯 Próximos Passos
+
+### **Features Planejadas**
+- [ ] **Edição de tarefas** em modal
+- [ ] **Filtros avançados** por data
+- [ ] **Notificações** de tarefas vencidas
+- [ ] **Compartilhamento** de tarefas
+- [ ] **Dark mode** toggle
+- [ ] **PWA** (Progressive Web App)
+- [ ] **Testes unitários** completos
+- [ ] **Docker** containerization
+
+### **Melhorias Técnicas**
+- [ ] **WebSockets** para updates em tempo real
+- [ ] **Redis** para cache
+- [ ] **Rate limiting** na API
+- [ ] **Swagger** documentation
+- [ ] **CI/CD** pipeline
+- [ ] **Monitoring** e logs avançados
+
+---
+
+**Desenvolvido com ❤️ usando Node.js, TypeScript, Angular e Material Design**
+
+**🚀 Pronto para produção! Deploy em minutos com as configurações adequadas.**

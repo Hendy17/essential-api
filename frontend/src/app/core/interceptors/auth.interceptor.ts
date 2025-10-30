@@ -34,8 +34,11 @@ export class AuthInterceptor implements HttpInterceptor {
   
   private addAuthHeader(request: HttpRequest<any>): HttpRequest<any> {
     const token = this.authService.getAccessToken();
+    console.log('🔐 AuthInterceptor - Token:', token ? 'EXISTS' : 'MISSING');
+    console.log('🌐 AuthInterceptor - URL:', request.url);
     
     if (token && !this.isAuthUrl(request.url)) {
+      console.log('✅ Adding Authorization header');
       return request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
@@ -43,6 +46,7 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     }
     
+    console.log('❌ Not adding Authorization header');
     return request;
   }
 

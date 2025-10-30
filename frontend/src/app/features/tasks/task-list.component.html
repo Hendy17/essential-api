@@ -2,26 +2,22 @@
   <!-- Header/Toolbar -->
   <mat-toolbar color="primary" class="app-toolbar">
     <span class="toolbar-title">
-      <mat-icon>task_alt</mat-icon>
       Gerenciador de Tarefas
     </span>
     
     <span class="toolbar-spacer"></span>
     
-    <!-- User Info -->
     @if (currentUser(); as user) {
       <span class="user-info">
-        <mat-icon>person</mat-icon>
         {{ user.name }}
       </span>
       
       <button mat-icon-button [matMenuTriggerFor]="userMenu">
-        <mat-icon>more_vert</mat-icon>
+        ⋮
       </button>
       
       <mat-menu #userMenu="matMenu">
         <button mat-menu-item (click)="logout()">
-          <mat-icon>logout</mat-icon>
           <span>Sair</span>
         </button>
       </mat-menu>
@@ -29,13 +25,11 @@
   </mat-toolbar>
 
   <div class="main-content">
-    <!-- Stats Cards -->
     <div class="stats-section">
       <div class="stats-cards">
         <mat-card class="stat-card total">
           <mat-card-content>
             <div class="stat-content">
-              <mat-icon>assignment</mat-icon>
               <div class="stat-info">
                 <div class="stat-number">{{ totalTasks() }}</div>
                 <div class="stat-label">Total</div>
@@ -47,7 +41,6 @@
         <mat-card class="stat-card pending">
           <mat-card-content>
             <div class="stat-content">
-              <mat-icon>schedule</mat-icon>
               <div class="stat-info">
                 <div class="stat-number">{{ pendingTasks() }}</div>
                 <div class="stat-label">Pendentes</div>
@@ -59,7 +52,6 @@
         <mat-card class="stat-card completed">
           <mat-card-content>
             <div class="stat-content">
-              <mat-icon>check_circle</mat-icon>
               <div class="stat-info">
                 <div class="stat-number">{{ completedTasks() }}</div>
                 <div class="stat-label">Concluídas</div>
@@ -71,11 +63,9 @@
     </div>
 
     <div class="content-wrapper">
-      <!-- Filters Section -->
       <mat-card class="filters-card">
         <mat-card-header>
           <mat-card-title>
-            <mat-icon>filter_list</mat-icon>
             Filtros
           </mat-card-title>
         </mat-card-header>
@@ -86,7 +76,6 @@
               <mat-form-field appearance="outline" class="search-field">
                 <mat-label>Buscar tarefas</mat-label>
                 <input matInput formControlName="search" placeholder="Digite para buscar...">
-                <mat-icon matSuffix>search</mat-icon>
               </mat-form-field>
 
               <mat-form-field appearance="outline">
@@ -132,7 +121,6 @@
               </mat-form-field>
 
               <button mat-raised-button color="warn" (click)="clearFilters()" class="clear-filters-btn">
-                <mat-icon>clear</mat-icon>
                 Limpar
               </button>
             </div>
@@ -140,11 +128,9 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Task List -->
       <mat-card class="tasks-card">
         <mat-card-header>
           <mat-card-title>
-            <mat-icon>list</mat-icon>
             Tarefas
             @if (totalTasks() > 0) {
               <mat-chip-set>
@@ -154,9 +140,11 @@
           </mat-card-title>
           
           <div class="header-actions">
-            <button mat-raised-button color="primary" disabled>
-              <mat-icon>add</mat-icon>
+            <button mat-raised-button color="primary" (click)="createTask()">
               Nova Tarefa
+            </button>
+            <button mat-button color="accent" (click)="forceLoadTasks()" style="margin-left: 10px;">
+              🔄 Recarregar
             </button>
           </div>
         </mat-card-header>
@@ -169,11 +157,9 @@
             </div>
           } @else if (tasks().length === 0) {
             <div class="empty-state">
-              <mat-icon class="empty-icon">assignment_late</mat-icon>
               <h3>Nenhuma tarefa encontrada</h3>
               <p>Não há tarefas que correspondam aos filtros aplicados.</p>
               <button mat-raised-button color="primary" (click)="clearFilters()">
-                <mat-icon>refresh</mat-icon>
                 Limpar Filtros
               </button>
             </div>
@@ -199,7 +185,6 @@
                           
                           <div class="task-priority">
                             <mat-chip [color]="getPriorityColor(task.priority)">
-                              <mat-icon>{{ getPriorityIcon(task.priority) }}</mat-icon>
                               {{ task.priority }}
                             </mat-chip>
                           </div>
@@ -212,7 +197,6 @@
                         <div class="task-meta">
                           @if (task.category) {
                             <mat-chip class="category-chip">
-                              <mat-icon>label</mat-icon>
                               {{ task.category }}
                             </mat-chip>
                           }
@@ -229,25 +213,25 @@
 
                           @if (task.dueDate) {
                             <span class="due-date">
-                              <mat-icon>event</mat-icon>
                               Vence em: {{ formatDate(task.dueDate) }}
                             </span>
                           }
 
                           <span class="created-date">
-                            <mat-icon>schedule</mat-icon>
                             Criada: {{ formatDate(task.createdAt!) }}
                           </span>
                         </div>
                       </div>
 
                       <div class="task-actions">
-                        <button mat-icon-button color="primary" disabled>
-                          <mat-icon>edit</mat-icon>
+                        <button mat-icon-button color="primary" (click)="editTask(task)" 
+                                title="Editar tarefa">
+                          ✏️
                         </button>
                         
-                        <button mat-icon-button color="warn" (click)="deleteTask(task)">
-                          <mat-icon>delete</mat-icon>
+                        <button mat-icon-button color="warn" (click)="deleteTask(task)"
+                                title="Excluir tarefa">
+                          🗑️
                         </button>
                       </div>
                     </div>
