@@ -6,7 +6,6 @@ import { asyncHandler } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 
 export class AuthController {
-  // Registro de usuário
   static register = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -20,7 +19,6 @@ export class AuthController {
 
     const { name, email, password } = req.body;
 
-    // Verificar se o usuário já existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       res.status(409).json({
@@ -30,7 +28,6 @@ export class AuthController {
       return;
     }
 
-    // Criar novo usuário
     const user = new User({
       name,
       email,
@@ -39,7 +36,6 @@ export class AuthController {
 
     await user.save();
 
-    // Gerar tokens
     const tokens = JWTUtils.generateTokenPair({
       userId: user._id.toString(),
       email: user.email,
@@ -61,7 +57,6 @@ export class AuthController {
     });
   });
 
-  // Login de usuário
   static login = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -75,7 +70,6 @@ export class AuthController {
 
     const { email, password } = req.body;
 
-    // Buscar usuário com senha
     const user = await User.findOne({ email, isActive: true }).select('+password');
     
     if (!user || !(await user.comparePassword(password))) {
@@ -86,7 +80,6 @@ export class AuthController {
       return;
     }
 
-    // Gerar tokens
     const tokens = JWTUtils.generateTokenPair({
       userId: user._id.toString(),
       email: user.email,
@@ -108,7 +101,6 @@ export class AuthController {
     });
   });
 
-  // Refresh token
   static refreshToken = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     const { refreshToken } = req.body;
 
@@ -123,7 +115,6 @@ export class AuthController {
     try {
       const decoded = JWTUtils.verifyToken(refreshToken);
       
-      // Verificar se o usuário ainda existe
       const user = await User.findById(decoded.userId);
       if (!user || !user.isActive) {
         res.status(401).json({
@@ -133,7 +124,6 @@ export class AuthController {
         return;
       }
 
-      // Gerar novos tokens
       const tokens = JWTUtils.generateTokenPair({
         userId: user._id.toString(),
         email: user.email,
@@ -153,7 +143,6 @@ export class AuthController {
     }
   });
 
-  // Obter perfil do usuário
   static getProfile = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -189,7 +178,6 @@ export class AuthController {
     });
   });
 
-  // Atualizar perfil
   static updateProfile = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -239,7 +227,6 @@ export class AuthController {
     });
   });
 
-  // Alterar senha
   static changePassword = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
     if (!req.user) {
       res.status(401).json({
@@ -280,11 +267,16 @@ export class AuthController {
     });
   });
 
-  // Logout (invalidar token - seria implementado com blacklist)
   static logout = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {
-    // Nota: Para implementação completa, seria necessário um sistema de blacklist de tokens
-    // Por enquanto, retornamos sucesso e o cliente deve descartar o token
-    
+    if (!req.user) {
+      res.status(401).json({
+        status: 'error',
+        message: 'Authentication required'
+      });
+      return;
+    }
+
+
     res.status(200).json({
       status: 'success',
       message: 'Logout successful'

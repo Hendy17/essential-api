@@ -98,7 +98,6 @@ const taskSchema = new Schema<ITask>({
   toObject: { virtuals: true }
 });
 
-// Índices para performance
 taskSchema.index({ userId: 1, createdAt: -1 });
 taskSchema.index({ userId: 1, completed: 1 });
 taskSchema.index({ userId: 1, priority: 1 });
@@ -113,12 +112,10 @@ taskSchema.index({
   }
 });
 
-// Virtual para verificar se a tarefa está atrasada
 taskSchema.virtual('isOverdue').get(function() {
   return this.dueDate && this.dueDate < new Date() && !this.completed;
 });
 
-// Middleware para validar se o usuário existe
 taskSchema.pre('save', async function(next) {
   if (this.isModified('userId')) {
     const User = mongoose.model('User');

@@ -49,7 +49,6 @@ export class TaskService {
     return rows as Task[];
   }
 
-  // Buscar tarefas com paginação e filtros
   static async getTasksPaginated(
     options: PaginationOptions = {},
     filters: TaskFilters = {}

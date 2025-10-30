@@ -84,7 +84,6 @@ export const updateTaskValidation: ValidationChain[] = [
     .trim()
 ];
 
-// Validações de autenticação
 export const registerValidation: ValidationChain[] = [
   body('name')
     .notEmpty()

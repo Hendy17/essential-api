@@ -28,10 +28,8 @@ export const authenticate = async (
       return;
     }
 
-    // Verificar token
     const decoded = JWTUtils.verifyToken(token);
 
-    // Verificar se o usuário ainda existe e está ativo
     const user = await User.findById(decoded.userId).select('+isActive');
     
     if (!user || !user.isActive) {
@@ -42,7 +40,6 @@ export const authenticate = async (
       return;
     }
 
-    // Adicionar informações do usuário à requisição
     req.user = {
       id: user._id.toString(),
       email: user.email,
@@ -60,7 +57,6 @@ export const authenticate = async (
   }
 };
 
-// Middleware para verificar se o usuário é admin
 export const requireAdmin = (
   req: AuthRequest,
   res: Response,
@@ -85,7 +81,6 @@ export const requireAdmin = (
   next();
 };
 
-// Middleware para verificar se o usuário pode acessar o recurso
 export const requireOwnershipOrAdmin = (resourceUserIdField: string = 'userId') => {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
@@ -96,12 +91,10 @@ export const requireOwnershipOrAdmin = (resourceUserIdField: string = 'userId') 
       return;
     }
 
-    // Admin pode acessar qualquer recurso
     if (req.user.role === 'admin') {
       return next();
     }
 
-    // Verificar se o usuário é o dono do recurso
     const resourceUserId = req.params[resourceUserIdField] || req.body[resourceUserIdField];
     
     if (resourceUserId && resourceUserId !== req.user.id) {
@@ -116,7 +109,6 @@ export const requireOwnershipOrAdmin = (resourceUserIdField: string = 'userId') 
   };
 };
 
-// Middleware opcional de autenticação (não falha se não houver token)
 export const optionalAuth = async (
   req: AuthRequest,
   res: Response,
@@ -141,7 +133,6 @@ export const optionalAuth = async (
 
     next();
   } catch (error) {
-    // Em caso de erro, continua sem autenticação
     next();
   }
 };
