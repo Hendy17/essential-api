@@ -1,50 +1,46 @@
 {
-  "name": "task-management-api",
+  "name": "task-management-fullstack",
   "version": "1.0.0",
-  "description": "API RESTful para gerenciamento de tarefas desenvolvida com Node.js, TypeScript e MySQL",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
-    "dev:watch": "nodemon --exec ts-node src/index.ts",
-    "clean": "rm -rf dist",
-    "prebuild": "npm run clean",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "nodejs",
-    "typescript",
-    "express",
-    "mysql",
-    "rest-api",
-    "crud"
+  "description": "Full-stack Task Management Application with Angular Frontend and Node.js Backend",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
   ],
-  "author": "Hendy Vorpagel",
-  "license": "MIT",
-  "type": "commonjs",
-  "dependencies": {
-    "@types/mongoose": "^5.11.96",
-    "bcryptjs": "^3.0.2",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "express-validator": "^7.3.0",
-    "helmet": "^8.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.2",
-    "morgan": "^1.10.1",
-    "mysql2": "^3.15.3"
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm run serve",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.5",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/morgan": "^1.9.10",
-    "@types/node": "^24.9.2",
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
-  }
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/user/task-management-fullstack.git"
+  },
+  "keywords": [
+    "task-management",
+    "nodejs",
+    "typescript",
+    "angular",
+    "mysql",
+    "rest-api",
+    "fullstack"
+  ],
+  "author": "Hendy Vorpagel",
+  "license": "MIT"
 }
